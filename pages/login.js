@@ -56,19 +56,23 @@ const login = () => {
   };
 
   const resetPassword = () => {
-    toast.promise(
-      async () => {
-        await sendPasswordResetEmail(auth, email);
-      },
-      {
-        pending: "Generating Reset Link",
-        success: "Reset link send to your email",
-        error: "You may have entered wrong email id",
-      },
-      {
-        autoClose: 5000,
-      }
-    );
+    try {
+      toast.promise(
+        async () => {
+          await sendPasswordResetEmail(auth, email);
+        },
+        {
+          pending: "Generating Reset Link",
+          success: "Reset link send to your email",
+          error: "You may have entered wrong email id",
+        },
+        {
+          autoClose: 5000,
+        }
+      );
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return isLoading || (!isLoading && currentUser) ? (

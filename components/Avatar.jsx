@@ -47,7 +47,7 @@ const Avatar = ({ size, user, onClick }) => {
           />
         </div>
       ) : (
-        <div className={`uppercase font-semibold`}>
+        <div className={`${f} uppercase font-semibold`}>
           {user?.displayName?.charAt(0)}
         </div>
       )}
