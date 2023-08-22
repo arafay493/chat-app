@@ -1,3 +1,4 @@
+import Chats from "@/components/Chats";
 import LeftNav from "@/components/LeftNav";
 import Loader from "@/components/Loader";
 import { useAuth } from "@/context/authContext";
@@ -24,7 +25,11 @@ export default function Home() {
         <div className="flex w-full shrink-0">
           <LeftNav />
           <div className="flex bg-c2 grow">
-            <div>Sidebar</div>
+            <div className="w-[400px] p-5 overflow-auto scrollbar border-r border-white/5">
+              <div className="flex flex-ccol h-full">
+                <Chats />
+              </div>
+            </div>
             <div>Chats</div>
           </div>
         </div>

@@ -34,17 +34,25 @@ const Avatar = ({ size, user, onClick }) => {
   return (
     <div
       className={`${c} rounded-full flex items-center justify-center text-base shrink-0 relative`}
-      style={{backgroundColor : user?.color}}
+      style={{ backgroundColor: user?.color }}
       onClick={onClick}
     >
+      {user.isOnline && (
+        <>
+          {(size === "large" || size === "x-large") && (
+            <span
+              className={`w-[10px] h-[10px] bg-green-500 absolute ${
+                size === "x-large"
+                  ? "bottom-[3px] right-[3px]"
+                  : "bottom-[2px] right-[2px]"
+              }  rounded-full`}
+            ></span>
+          )}
+        </>
+      )}
       {user?.photoURL ? (
         <div className={`${c} overflow-hidden rounded-full`}>
-          <Image
-            src={user?.photoURL}
-            alt="User Profile"
-            width={s}
-            height={s}
-          />
+          <Image src={user?.photoURL} alt="User Profile" width={s} height={s} />
         </div>
       ) : (
         <div className={`${f} uppercase font-semibold`}>

@@ -15,12 +15,17 @@ import { doc, updateDoc } from "firebase/firestore";
 import { updateProfile } from "firebase/auth";
 import { auth, db, storage } from "@/firebase/firebase_config";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
+import UsersPopup from "./popups/UsersPopup";
 
 const LeftNav = () => {
-  const [editProfile, setEditProfile] = useState(true);
+  const [avalibleUsers, setAvalibleUsers] = useState(false);
+  const [editProfile, setEditProfile] = useState(false);
   const [nameEdited, setNameEdited] = useState(false);
+  // const [profile , setProfile] = useState(null)
+  // const [progressBarWidth, setProgressBarWidth] = useState("");
   const { currentUser, signOut, setCurrentUser } = useAuth();
 
+  // let progress;
   const uploadImageToFirestore = (file) => {
     try {
       if (file) {
@@ -32,6 +37,7 @@ const LeftNav = () => {
             const progress =
               (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
             console.log("Upload is " + progress + "% done");
+            // setProgressBarWidth(progress)
             switch (snapshot.state) {
               case "paused":
                 console.log("Upload is paused");
@@ -52,12 +58,15 @@ const LeftNav = () => {
                 await updateProfile(auth.currentUser, {
                   photoURL: downloadURL,
                 });
+                console.log(currentUser);
               }
             );
           }
         );
       }
-      // console.log(file);
+
+      // console.log(currentUser);
+      // console.log(auth.currentUser);
     } catch (error) {
       console.error(error);
     }
@@ -77,7 +86,7 @@ const LeftNav = () => {
         obj.photoURL = value;
         break;
       case "photo-remove":
-        obj.photoURL = null;
+        obj.photoURL = value;
         break;
       default:
         break;
@@ -91,13 +100,14 @@ const LeftNav = () => {
 
           if (type === "photo-remove") {
             await updateProfile(auth.currentUser, {
-              photoURL: null,
+              photoURL: value,
             });
           }
           if (type === "name") {
             await updateProfile(auth.currentUser, {
               displayName: value,
             });
+            setNameEdited(false);
           }
           if (type === "color") {
             await updateProfile(auth.currentUser, {
@@ -121,9 +131,8 @@ const LeftNav = () => {
         }
       );
     } catch (error) {
-      console.error(error);
+      console.error(error.message);
     }
-    setNameEdited(false);
   };
 
   const onkeyup = (event) => {
@@ -165,13 +174,15 @@ const LeftNav = () => {
               type="file"
               id="fileUpload"
               className="hidden"
-              onChange={(e) => uploadImageToFirestore(e.target.files[0])}
+              onChange={(e) => {
+                uploadImageToFirestore(e.target.files[0]);
+              }}
             />
           </div>
           {currentUser.photoURL && (
             <div
               className="w-6 h-6 bg-red-500 rounded-full flex justify-center items-center absolute right-0 bottom-0 cursor-pointer"
-              onClick={() => handleUpdateProfile("photo-remove")}
+              onClick={() => handleUpdateProfile("photo-remove", null)}
             >
               <MdDeleteForever />
             </div>
@@ -221,6 +232,7 @@ const LeftNav = () => {
       </div>
     );
   };
+  // console.log("outside", currentUser);
 
   return (
     <div
@@ -242,8 +254,19 @@ const LeftNav = () => {
         </div>
       )}
 
+      {/* <div className="flex flex-col gap-2 justify-center w-[300px] m-auto">
+        <span>Profile Image Uploading</span>
+        <div className="w-full h-[10px] bg-c3 flex rounded-3xl">
+          <span
+            className={`h-full bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500  rounded-3xl transition-all`}
+            style={{ width: progress }}
+          ></span>
+        </div>
+        <span className="text-end w-[300px]">{progress}</span>
+      </div> */}
+
       <div
-        className={`flex  gap-5 ${
+        className={`flex gap-5 ${
           editProfile ? "ml-5" : "flex-col items-center"
         }`}
       >
@@ -251,7 +274,9 @@ const LeftNav = () => {
           size={"x-large"}
           className={"bg-green-500 hover:bg-gray-600"}
           icon={<FiPlus size={24} />}
-          onClick={() => {}}
+          onClick={() => {
+            setAvalibleUsers(!avalibleUsers);
+          }}
         />
         <Icon
           size={"x-large"}
@@ -260,6 +285,9 @@ const LeftNav = () => {
           onClick={signOut}
         />
       </div>
+      {avalibleUsers && (
+        <UsersPopup onHide={() => setAvalibleUsers(!avalibleUsers)} title = "Available Users" />
+      )}
     </div>
   );
 };
