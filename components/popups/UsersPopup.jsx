@@ -5,7 +5,7 @@ import { useChats } from "@/context/chatContext";
 import Avatar from "../Avatar";
 import { doc, getDoc, serverTimestamp, setDoc, updateDoc } from "firebase/firestore";
 import { db } from "@/firebase/firebase_config";
-
+import Search from "../Search";
 const UsersPopup = (props) => {
   const { currentUser } = useAuth();
   const { users , dispatch } = useChats();
@@ -65,6 +65,7 @@ const UsersPopup = (props) => {
   };
   return (
     <PopupWrapper {...props}>
+      <Search />
       <div className="mt-5 flex flex-col gap-2 grow relative overflow-auto scrollbar">
         <div className="absolute w-full">
           {users &&

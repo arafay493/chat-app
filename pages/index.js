@@ -1,13 +1,16 @@
+import Chat from "@/components/Chat";
 import Chats from "@/components/Chats";
 import LeftNav from "@/components/LeftNav";
 import Loader from "@/components/Loader";
 import { useAuth } from "@/context/authContext";
+import { useChats } from "@/context/chatContext";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 
 export default function Home() {
   const router = useRouter();
   const { signOut, currentUser, isLoading } = useAuth();
+  const {data} = useChats()
 
   useEffect(() => {
     if (!isLoading && !currentUser) {
@@ -30,7 +33,7 @@ export default function Home() {
                 <Chats />
               </div>
             </div>
-            <div>Chats</div>
+            {data.user && <Chat />}
           </div>
         </div>
       </div>
