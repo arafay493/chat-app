@@ -7,6 +7,13 @@ export const ChatContextProvider = ({ children }) => {
   const [users, setUsers] = useState(false);
   const [chats, setChats] = useState([]);
   const [seletedChat, setSelectedChat] = useState(null);
+  const [inputText, setInputText] = useState("");
+  const [attachment, setAttachment] = useState(null);
+  const [attachmentPreview, setAttachmentPreview] = useState(null);
+  const [editMsg, setEditMsg] = useState(null);
+  const [isTyping, setIsTyping] = useState(null);
+  const [imageViewer, setImageViewer] = useState(null);
+
   const { currentUser } = useAuth();
 
   const INITIAL_STATE = {
@@ -22,7 +29,7 @@ export const ChatContextProvider = ({ children }) => {
           chatId: currentUser.uid + action.payload.uid,
         };
       default:
-        return state
+        return state;
     }
   };
 
@@ -38,6 +45,18 @@ export const ChatContextProvider = ({ children }) => {
         setChats,
         seletedChat,
         setSelectedChat,
+        inputText,
+        setInputText,
+        attachment,
+        setAttachment,
+        attachmentPreview,
+        setAttachmentPreview,
+        editMsg,
+        setEditMsg,
+        isTyping,
+        setIsTyping,
+        imageViewer,
+        setImageViewer,
       }}
     >
       {children}
