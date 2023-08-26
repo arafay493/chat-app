@@ -27,11 +27,7 @@ const ComposeBar = () => {
   const handleTyping = (e) => {
     setInputText(e.target.value);
   };
-  const onkeyup = (e) => {
-    if (e.key === "Enter" && (inputText || attachment)) {
-      handleSend();
-    }
-  };
+
   const handleSend = async () => {
     if (attachment) {
       const storageRef = ref(storage, uuid());
@@ -102,6 +98,12 @@ const ComposeBar = () => {
     setInputText("");
     setAttachment(null);
     setAttachmentPreview(null);
+  };
+
+  const onkeyup = (e) => {
+    if (e.key === "Enter" && (inputText || attachment)) {
+      handleSend();
+    }
   };
   return (
     <div className="flex items-center gap-2 grow">

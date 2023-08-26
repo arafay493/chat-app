@@ -1,22 +1,27 @@
 import { useAuth } from "@/context/authContext";
-import React from "react";
+import React, { useState } from "react";
 import Avatar from "./Avatar";
 import { useChats } from "@/context/chatContext";
 import Image from "next/image";
 import ImageViewer from "react-simple-image-viewer";
 import { Timestamp } from "firebase/firestore";
 import { formateDate } from "@/utils/helpers";
+import { GoChevronDown } from "react-icons/go";
+import Icon from "./Icon";
+import MessageMenu from "./MessageMenu";
 
 const Message = ({ message }) => {
+  const [showMenu, setShowMenu] = useState(false);
   const { currentUser } = useAuth();
   const { users, data, imageViewer, setImageViewer } = useChats();
   const self = message.sender === currentUser.uid;
 
   const timeStamp = new Timestamp(
-    message.date?.seconds,
-    message.date?.nanoseconds
+    message?.date?.seconds,
+    message?.date?.nanoseconds
   );
   const date = timeStamp.toDate();
+
   return (
     <div className={`mb-5 max-w-[75%] ${self ? "self-end" : ""}`}>
       <div
@@ -66,6 +71,27 @@ const Message = ({ message }) => {
               {message.text}
             </div>
           )}
+          <div
+            className={`${
+              showMenu ? "" : "hidden"
+            } group-hover:flex absolute top-2 ${
+              self ? "left-2 bg-c5" : "right-2 bg-c1"
+            }`}
+            onClick={() => setShowMenu(!showMenu)}
+          >
+            <Icon
+              size={"medium"}
+              className={"hover:bg-inherit rounded-none"}
+              icon={<GoChevronDown size={24} className="text-c3" />}
+            />
+            {showMenu && (
+              <MessageMenu
+                self={self}
+                showMenu={showMenu}
+                setShowMenu={setShowMenu}
+              />
+            )}
+          </div>
         </div>
       </div>
       <div
@@ -73,9 +99,7 @@ const Message = ({ message }) => {
           self ? "justify-start flex-row-reverse mr-12" : "ml-12"
         }`}
       >
-        <div className="text-xs text-c3">
-            {formateDate(date)}
-        </div>
+        <div className="text-xs text-c3">{formateDate(date)}</div>
       </div>
     </div>
   );

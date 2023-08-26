@@ -6,7 +6,7 @@ import Message from "./Message";
 
 const Messages = () => {
   const [messages, setMessages] = useState([]);
-  const { data } = useChats();
+  const { data, setIsTyping } = useChats();
   const ref = useRef();
 
   useEffect(() => {
@@ -15,7 +15,10 @@ const Messages = () => {
 
   useEffect(() => {
     const unsub = onSnapshot(doc(db, "chats", data.chatId), (doc) => {
-      setMessages(doc.data().messages);
+      if (doc.exists()) {
+        // console.log(doc.data())
+        setMessages(doc.data().messages);
+      }
     });
     return () => unsub();
   }, [data.chatId]);
@@ -28,7 +31,7 @@ const Messages = () => {
       )}
       {messages !== [] &&
         messages?.map((m) => {
-          return <Message message={m} key={m.id} />
+          return <Message message={m} key={m.id} />;
         })}
     </div>
   );

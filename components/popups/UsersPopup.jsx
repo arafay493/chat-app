@@ -72,7 +72,7 @@ const UsersPopup = (props) => {
             Object.values(users).map((user) => (
               <div
                 className="flex items-center gap-4 rounded-xl hover:bg-c5 cursor-pointer py-2 px-4"
-                key={user.id}
+                key={user.uid}
                 onClick={() => handleSelectChat(user)}
               >
                 <Avatar size={"large"} user={user} />

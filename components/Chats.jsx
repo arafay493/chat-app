@@ -16,6 +16,7 @@ const Chats = () => {
     setSelectedChat,
     dispatch,
   } = useChats();
+
   const [search, setSearch] = useState("");
 
   const { currentUser } = useAuth();
@@ -78,31 +79,38 @@ const Chats = () => {
               chat[1].date?.nanoseconds
             );
             const date = timeStamp.toDate();
-            const user = users[chat[1].userInfo.uid];
+            const user = users[chat[1].userInfo?.uid];
+
             return (
-              <li
-                className={`h-[90px] flex items-center gap-4 rounded-3xl p-4 cursor-pointer hover:bg-c1 ${
-                  seletedChat?.uid === user?.uid ? "bg-c1" : ""
-                }`}
-                key={chat[0]}
-                onClick={() => handleSelect(user, chat[0])}
-              >
-                <Avatar size={"x-large"} user={user} />
-                <div className="flex flex-col gap-1 grow relative">
-                  <div className="text-base text-white flex items-center justify-between">
-                    <div className="font-medium">{user.displayName}</div>
-                    <div className="text-c3 text-xs">{formateDate(date)}</div>
-                  </div>
-                  <p className="text-sm text-c3 line-clamp-1 break-all">
-                    {chat[1]?.lastMessage?.text ||
-                      (chat[1]?.lastMessage?.img && "image") ||
-                      "Send first message"}
-                  </p>
-                  <span className="absolute right-0 top-7 min-w-[20px] h-5 rounded-full bg-red-500 flex justify-center items-center text-sm">
-                    5
-                  </span>
-                </div>
-              </li>
+              <>
+                {user && (
+                  <li
+                    className={`h-[90px] flex items-center gap-4 rounded-3xl p-4 cursor-pointer hover:bg-c1 ${
+                      seletedChat?.uid === user?.uid ? "bg-c1" : ""
+                    }`}
+                    key={chat[0]}
+                    onClick={() => handleSelect(user, chat[0])}
+                  >
+                    {<Avatar size={"x-large"} user={user} />}
+                    <div className="flex flex-col gap-1 grow relative">
+                      <div className="text-base text-white flex items-center justify-between">
+                        <div className="font-medium">{user?.displayName}</div>
+                        <div className="text-c3 text-xs">
+                          {formateDate(date)}
+                        </div>
+                      </div>
+                      <p className="text-sm text-c3 line-clamp-1 break-all">
+                        {chat[1]?.lastMessage?.text ||
+                          (chat[1]?.lastMessage?.img && "image") ||
+                          "Send first message"}
+                      </p>
+                      <span className="absolute right-0 top-7 min-w-[20px] h-5 rounded-full bg-red-500 flex justify-center items-center text-sm">
+                        5
+                      </span>
+                    </div>
+                  </li>
+                )}
+              </>
             );
           })}
       </ul>
