@@ -80,15 +80,14 @@ const Chats = () => {
             );
             const date = timeStamp.toDate();
             const user = users[chat[1].userInfo?.uid];
-
             return (
               <>
-                {user && (
+                {user && chat && (
                   <li
                     className={`h-[90px] flex items-center gap-4 rounded-3xl p-4 cursor-pointer hover:bg-c1 ${
                       seletedChat?.uid === user?.uid ? "bg-c1" : ""
                     }`}
-                    key={chat[0]}
+                    key={`${chat[0]}`}
                     onClick={() => handleSelect(user, chat[0])}
                   >
                     {<Avatar size={"x-large"} user={user} />}

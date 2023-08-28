@@ -6,17 +6,17 @@ import { useAuth } from "@/context/authContext";
 import { useChats } from "@/context/chatContext";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
-
 export default function Home() {
   const router = useRouter();
   const { signOut, currentUser, isLoading } = useAuth();
-  const {data} = useChats()
-
+  const {users , data} = useChats()
   useEffect(() => {
     if (!isLoading && !currentUser) {
       router.push("/login");
     }
   }, [currentUser, isLoading]);
+
+
   return !currentUser ? (
     <Loader />
   ) : (

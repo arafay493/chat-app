@@ -13,7 +13,6 @@ export const ChatContextProvider = ({ children }) => {
   const [editMsg, setEditMsg] = useState(null);
   const [isTyping, setIsTyping] = useState(null);
   const [imageViewer, setImageViewer] = useState(null);
-
   const { currentUser } = useAuth();
 
   const INITIAL_STATE = {
@@ -26,7 +25,11 @@ export const ChatContextProvider = ({ children }) => {
       case "CHANGE_USER":
         return {
           user: action.payload,
-          chatId: currentUser.uid + action.payload.uid,
+          // chatId: currentUser.uid + action.payload.uid,
+          chatId:
+            currentUser.uid > action.payload.uid
+              ? currentUser.uid + action.payload.uid
+              : action.payload.uid + currentUser.uid,
         };
       default:
         return state;

@@ -1,10 +1,21 @@
 import { db } from "@/firebase/firebase_config";
-import { collection, doc, getDoc, getDocs, query, serverTimestamp, setDoc, updateDoc, where } from "firebase/firestore";
+import {
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  query,
+  serverTimestamp,
+  setDoc,
+  updateDoc,
+  where,
+} from "firebase/firestore";
 import React, { useState } from "react";
 import { RiSearch2Line } from "react-icons/ri";
 import Avatar from "./Avatar";
 import { useAuth } from "@/context/authContext";
 import { useChats } from "@/context/chatContext";
+import { v4 as uuid } from "uuid";
 const Search = () => {
   const [userName, setUserName] = useState("");
   const [user, setUser] = useState(null);
@@ -37,7 +48,11 @@ const Search = () => {
 
   const handleSelectChat = async () => {
     try {
-      const combinedId = currentUser.uid + user.uid;
+      const combinedId =
+        currentUser.uid > user.uid
+          ? currentUser.uid + user.uid
+          : user.uid + currentUser.uid;
+      // const combinedId = uuid();
       const docRef = await getDoc(doc(db, "chats", combinedId));
 
       if (!docRef.exists()) {
@@ -57,13 +72,13 @@ const Search = () => {
         }
 
         await updateDoc(doc(db, "userChats", currentUser.uid), {
-          [combinedId + ".userInfo"] : {
+          [combinedId + ".userInfo"]: {
             uid: user.uid,
-            displayName : user.displayName,
-            photoURL : user.photoURL || null,
-            color: user.color
+            displayName: user.displayName,
+            photoURL: user.photoURL || null,
+            color: user.color,
           },
-          [combinedId + ".date"] : serverTimestamp(),
+          [combinedId + ".date"]: serverTimestamp(),
         });
 
         if (!userChatRef.exists()) {
@@ -71,22 +86,21 @@ const Search = () => {
         }
 
         await updateDoc(doc(db, "userChats", user.uid), {
-          [combinedId + ".userInfo"] : {
+          [combinedId + ".userInfo"]: {
             uid: currentUser.uid,
-            displayName : currentUser.displayName,
-            photoURL : currentUser.photoURL || null,
-            color: currentUser.color
+            displayName: currentUser.displayName,
+            photoURL: currentUser.photoURL || null,
+            color: currentUser.color,
           },
-          [combinedId + ".date"] : serverTimestamp(),
+          [combinedId + ".date"]: serverTimestamp(),
         });
       } else {
         // If chat is already available in a chat list
       }
 
-
-      setUser(null)
-      setUserName("")
-      dispatch({type : "CHANGE_USER" , payload : user})
+      setUser(null);
+      setUserName("");
+      dispatch({ type: "CHANGE_USER", payload: user });
     } catch (error) {
       console.error(error);
     }
@@ -109,12 +123,12 @@ const Search = () => {
         </span>
       </div>
 
-      {err && <>
-        <div className="mt-5 w-full text-center text-sm">
-            User Not Found
-        </div>
-        <div className="w-full h-[1px] bg-white/10 mt-5"></div>
-      </>}
+      {err && (
+        <>
+          <div className="mt-5 w-full text-center text-sm">User Not Found</div>
+          <div className="w-full h-[1px] bg-white/10 mt-5"></div>
+        </>
+      )}
 
       {user && (
         <>

@@ -3,16 +3,25 @@ import PopupWrapper from "./PopupWrapper";
 import { useAuth } from "@/context/authContext";
 import { useChats } from "@/context/chatContext";
 import Avatar from "../Avatar";
-import { doc, getDoc, serverTimestamp, setDoc, updateDoc } from "firebase/firestore";
+import {
+  doc,
+  getDoc,
+  serverTimestamp,
+  setDoc,
+  updateDoc,
+} from "firebase/firestore";
 import { db } from "@/firebase/firebase_config";
 import Search from "../Search";
 const UsersPopup = (props) => {
   const { currentUser } = useAuth();
-  const { users , dispatch } = useChats();
+  const { users, dispatch } = useChats();
 
   const handleSelectChat = async (user) => {
     try {
-      const combinedId = currentUser.uid + user.uid;
+      const combinedId =
+        currentUser.uid > user.uid
+          ? currentUser.uid + user.uid
+          : user.uid + currentUser.uid;
       const docRef = await getDoc(doc(db, "chats", combinedId));
 
       if (!docRef.exists()) {
@@ -32,13 +41,13 @@ const UsersPopup = (props) => {
         }
 
         await updateDoc(doc(db, "userChats", currentUser.uid), {
-          [combinedId + ".userInfo"] : {
+          [combinedId + ".userInfo"]: {
             uid: user.uid,
-            displayName : user.displayName,
-            photoURL : user.photoURL || null,
-            color: user.color
+            displayName: user.displayName,
+            photoURL: user.photoURL || null,
+            color: user.color,
           },
-          [combinedId + ".date"] : serverTimestamp(),
+          [combinedId + ".date"]: serverTimestamp(),
         });
 
         if (!userChatRef.exists()) {
@@ -46,19 +55,19 @@ const UsersPopup = (props) => {
         }
 
         await updateDoc(doc(db, "userChats", user.uid), {
-          [combinedId + ".userInfo"] : {
+          [combinedId + ".userInfo"]: {
             uid: currentUser.uid,
-            displayName : currentUser.displayName,
-            photoURL : currentUser.photoURL || null,
-            color: currentUser.color
+            displayName: currentUser.displayName,
+            photoURL: currentUser.photoURL || null,
+            color: currentUser.color,
           },
-          [combinedId + ".date"] : serverTimestamp(),
+          [combinedId + ".date"]: serverTimestamp(),
         });
       } else {
         // If chat is already available in a chat list
       }
-      dispatch({type : "CHANGE_USER" , payload : user})
-      props.onHide()
+      dispatch({ type: "CHANGE_USER", payload: user });
+      props.onHide();
     } catch (error) {
       console.error(error);
     }
